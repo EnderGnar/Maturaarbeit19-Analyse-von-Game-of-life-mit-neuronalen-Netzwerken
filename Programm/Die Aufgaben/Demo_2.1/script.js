@@ -54,7 +54,7 @@ let world={
             let neural2=(this.generations[gen].neural2)?this.generations[gen].neural2.body:example;
             ctx.beginPath();
             ctx.rect(ps*cell,ps*gen,ps,ps);
-            ctx.fillStyle=`rgb(${(real[cell])*255*showreal},${(neural[cell])*255*showneural},0)`//ctx.fillStyle=`rgb(${(1-real[cell])*255},${(1-neural[cell])*255},${(1-neural2[cell])*255})`;
+            ctx.fillStyle=`rgb(${(real[cell])*255*showreal},${(neural[cell])*255*showneural},0)`
             ctx.fill();
         }
     },
@@ -91,5 +91,20 @@ function updating(){
     world.step();
     world.draw();
 }
+
+$('#train').click(()=>letrain(100,10));
+$('#end').click(()=>scanner=getscanner());
+$('#res').click(()=>world.setup());
+$('#smooth').click(function(){
+	if(smooth){
+		this.innerHTML='smooth: false';
+		smooth=false;
+	}
+	else{
+		this.innerHTML='smooth: true';
+		smooth=true;
+	}
+});
+
 let ui=window.setInterval(updating,100)
 

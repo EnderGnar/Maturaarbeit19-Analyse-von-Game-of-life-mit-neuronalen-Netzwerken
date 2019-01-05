@@ -88,6 +88,48 @@ function setup(){
 	createdata(300);
 	game.randomize();
 }
+
+$('#train').click(()=>letrain(100,10));
+$('#end').click(()=>scanner=notalmost2());
+$('#rand').click(()=>game.randomize());
+$('#smooth').click(function(){
+	if(smooth){
+		this.innerHTML='smooth: false';
+		smooth=false;
+	}
+	else{
+		this.innerHTML='smooth: true';
+		smooth=true;
+	}
+});
+$('#nn1').click(function(){
+	scanner=nn.createNeuralNetwork({
+		f:'DeLU',
+		input:{r:size,c:size},
+		output:{r:size,c:size},
+		saves:fsave({r:size,c:size,name:'a',number:10})
+			.concat(fsave({r:size,c:size,name:'b',number:10}))
+			.concat([{r:size,c:size,name:'c'}]),
+		actions:fcon({t:"Convolution",d:{r:fs,c:fs},input:'input',output:'a',bias:true,isame:true,number:10})
+			.concat(fcon({t:"Activation",input:'a',output:'b',number:10}))
+			.concat(fcon({t:"Convolution",d:{r:1,c:0},input:'b',output:'c',bias:true,osame:true,number:10}))
+			.concat(fcon({t:"Activation",input:'c',output:'output',osame:true,isame:true,number:1})),
+	});
+});
+$('#nn2').click(function(){
+	scanner=nn.createNeuralNetwork({
+		f:'DeLU',
+		input:{r:size,c:size},
+		output:{r:size,c:size},
+		saves:fsave({r:size,c:size,name:'a',number:10})
+			.concat(fsave({r:size,c:size,name:'b',number:10}))
+			.concat([{r:size,c:size,name:'c'}]),
+		actions:fcon({t:"Convolution",d:{r:fs,c:fs},input:'input',output:'a',bias:false,isame:true,number:10})
+			.concat(fcon({t:"Activation",input:'a',output:'b',number:10}))
+			.concat(fcon({t:"Convolution",d:{r:1,c:0},input:'b',output:'c',bias:false,osame:true,number:10}))
+			.concat(fcon({t:"Activation",input:'c',output:'output',osame:true,isame:true,number:1})),
+	});
+});
 setup();
 let ui=window.setInterval(updating,100);
 

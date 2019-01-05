@@ -4,7 +4,8 @@ var id=false;
 var scanner=new nn.LinearNN(9,1,[8],nn.ReLU);
 var totaltrains=0;
 var testdata=[];
-var lookup=true;
+var smooth=false;
+var lookup=false;
 var learn=[];
 var ln=100;
 for(let i=0;i<20;i++){
@@ -51,6 +52,7 @@ function testcost(){
 //Teste über n Netzwerke ihre Leistung
 function testscanner(n=1){
 	data=[];
+	lookup=true;
 	for(let i=0;i<n;i++){
 		scanner=new nn.LinearNN(9,1,[8,4],nn.DeLU);
 		totaltrains=0;
@@ -58,6 +60,7 @@ function testscanner(n=1){
 		if(result!==undefined)data.push(result);
 		else data.push('not done');
 	}
+	lookup=false;
 	return data;
 }
 
@@ -102,7 +105,8 @@ var game={
 			ctx.beginPath();
 			ctx.rect(x*s,y*s,s,s);
 			let c=this.get(x,y)*255;
-			ctx.fillStyle='rgb('+c+','+((this.NNtiles[y*this.tc+x]>0.5)?255:0)+',0)';
+			if(smooth) ctx.fillStyle='rgb('+c+','+(this.NNtiles[y*this.tc+x]*255)+',0)';
+			else ctx.fillStyle='rgb('+c+','+((this.NNtiles[y*this.tc+x]>0.5)?255:0)+',0)';
 			ctx.fill();
 		}
 	},
@@ -129,5 +133,24 @@ function updating(){
 function setup(){
 	game.randomize();
 }
+$('#train').click(()=>letrain(1000,10));
+$('#end').click(()=>scanner=getfinal());
+$('#rand').click(()=>game.randomize());
+$('#smooth').click(function(){
+	if(smooth){
+		this.innerHTML='smooth: false';
+		smooth=false;
+	}
+	else{
+		this.innerHTML='smooth: true';
+		smooth=true;
+	}
+});
+$('#nn1').click(()=>scanner=new nn.LinearNN(9,1,[12],nn.Sigmoid));
+$('#nn2').click(()=>scanner=new nn.LinearNN(9,1,[8,4],nn.Sigmoid));
+$('#nn3').click(()=>scanner=new nn.LinearNN(9,1,[8,4],nn.ReLU));
+$('#nn4').click(()=>scanner=new nn.LinearNN(9,1,[8,4],nn.DeLU));
+$('#nn5').click(()=>scanner=new nn.LinearNN(9,1,[8],nn.DeLU));
+$('#nn6').click(()=>scanner=new nn.LinearNN(9,1,[6],nn.DeLU));
 setup();
 let ui=window.setInterval(updating,100);
